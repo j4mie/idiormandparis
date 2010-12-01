@@ -1,80 +1,108 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"> 
+        <title>Idiorm and Paris - object relational mapper (ORM), fluent SQL query builder and Active Record implementation for PHP</title>
+        <link href="http://fonts.googleapis.com/css?family=Lobster&amp;subset=latin" rel="stylesheet" type="text/css">
+        <link href='http://fonts.googleapis.com/css?family=Droid+Serif&amp;subset=latin' rel='stylesheet' type='text/css'>
+        <link href="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.css" type="text/css" rel="stylesheet" />
+        <link href="styles.css" rel="stylesheet" type="text/css">
 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+        <script type="text/javascript" src="http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                prettyPrint();
 
-	<title>j4mie/idiormandparis @ GitHub</title>
-	
-	<style type="text/css">
-		body {
-  		margin-top: 1.0em;
-  		background-color: #315074;
-		  font-family: "Helvetica,Arial,FreeSans";
-  		color: #ffffff;
+                // equal height columns
+                var columns = $('div.column');
+                var max_height = 0;
+                columns.each(function () {
+                    var height = $(this).height();
+                    if (height > max_height) {
+                        max_height = height;
+                    }
+                });
+                columns.height(max_height);
+            });
+        </script>
+
+    </head>
+    <body>
+        <div id="wrapper" class="idiorm">
+            <h1><span class="idiorm">Idiorm</span><span class="separator">&amp;</span><span class="paris">Paris</span></h1>
+            <h2>A minimalist database toolkit for PHP5.</h2>
+
+            <div class="column first" id="idiorm_column">
+                <h3><a href="https://github.com/j4mie/idiorm" title="Idiorm - an object-relational mapper and fluent query builder for PHP"><strong>Idiorm</strong></a> is an object-relational mapper and fluent query builder.</h3>
+                <p>If you prefer to think about <strong>tables</strong> and <strong>joins</strong>, you should probably be using Idiorm.</p>
+                <pre><code class="prettyprint">$user = ORM::for_table('user')
+    -&gt;where_equal('username', 'j4mie')
+    -&gt;find_one();
+
+$user-&gt;first_name = 'Jamie';
+$user-&gt;save();
+
+$tweets = ORM::for_table('tweet')
+    -&gt;select('tweet.*')
+    -&gt;join('user', array(
+        'user.id', '=', 'tweet.user_id'
+    ))
+    -&gt;where_equal('user.username', 'j4mie')
+    -&gt;find_many();
+
+foreach ($tweets as $tweet) {
+    echo $tweet-&gt;text;
+}</code></pre>
+
+                <p class="github_link">
+                    <a href="https://github.com/j4mie/idiorm" title="Idiorm - an object-relational mapper and fluent query builder for PHP">
+                        Documentation &amp; code on Github
+                    </a>
+                </p>
+            </div>
+
+            <div class="column second" id="paris_column">
+                <h3><a href="https://github.com/j4mie/paris" title="Paris - a lightweight Active Record implementation for PHP"><strong>Paris</strong></a> is an Active Record implementation based on Idiorm.</h3>
+                <p>If you prefer to think about <strong>model objects</strong> and <strong>relationships</strong>, you should probably be using Paris.</p>
+                <pre><code class="prettyprint">class User extends Model {
+    public function tweets() {
+        return $this-&gt;has_many('Tweet');
     }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-		h1 { font-size: 3.8em; color: #ceaf8b; margin-bottom: 3px; }
-		h1 .small { font-size: 0.4em; }
-		h1 a { text-decoration: none }
-		h2 { font-size: 1.5em; color: #ceaf8b; }
-    h3 { text-align: center; color: #ceaf8b; }
-    a { color: #ceaf8b; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-		pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-	</style>
-	
-</head>
+}
 
-<body>
-  <a href="http://github.com/j4mie/idiormandparis"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+class Tweet extends Model {}
 
-  <div id="container">
+$user = Model::factory('User')
+    -&gt;where_equal('username', 'j4mie')
+    -&gt;find_one();
+$user-&gt;first_name = 'Jamie';
+$user-&gt;save();
 
-    <div class="download">
-      <a href="http://github.com/j4mie/idiormandparis/zipball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
-      <a href="http://github.com/j4mie/idiormandparis/tarball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
-    </div>
+$tweets = $user-&gt;tweets()-&gt;find_many();
+foreach ($tweets as $tweet) {
+    echo $tweet-&gt;text;
+}
+</code></pre>
 
-    <h1><a href="http://github.com/j4mie/idiormandparis">Idiorm and Paris</a>
-      <span class="small">by <a href="http://github.com/j4mie">j4mie</a></span></h1>
-
-    <div class="description">
-      Simple website for Idiorm and Paris at https://j4mie.github.com/idiormandparis/
-    </div>
-
-    <h2>Authors</h2>
-<p>Jamie Matthews (jamie.matthews@gmail.com)<br/><br/>      </p>
-<h2>Contact</h2>
-<p>Jamie Matthews (jamie.matthews@gmail.com)<br/>      </p>
-
-
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="http://github.com/j4mie/idiormandparis/zipball/master">zip</a> or
-      <a href="http://github.com/j4mie/idiormandparis/tarball/master">tar</a> formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/j4mie/idiormandparis</pre>
-    </p>
-
-    <div class="footer">
-      get the source code on GitHub : <a href="http://github.com/j4mie/idiormandparis">j4mie/idiormandparis</a>
-    </div>
-
-  </div>
-
-  
-</body>
+                <p class="github_link">
+                    <a href="https://github.com/j4mie/paris" title="Paris - a lightweight Active Record implementation for PHP">
+                        Documentation &amp; code on Github
+                    </a>
+                </p>
+            </div>
+            <div class="clear"></div>
+            <div id="footer">
+                <h3><strong>Idiorm</strong> &amp; <strong>Paris</strong> were created by Jamie Matthews.</h3>
+                <div id="links">
+                    <ul>
+                        <li><a href="http://twitter.com/j4mie" title="twitter">twitter</a></li>
+                        <li><a href="https://github.com/j4mie" title="github">github</a></li>
+                        <li><a href="http://j4mie.org" title="j4mie dot org">j4mie.org</a></li>
+                    </ul>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </body>
 </html>
