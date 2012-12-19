@@ -113,6 +113,12 @@ pre {
     margin-bottom: 10px;
 }
 
+#footer p {
+    font-size: 1.2em;
+    text-align: center;
+    margin-bottom: .7em;
+}
+
 #links {
     float: left;
     width: 100%;
